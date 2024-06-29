@@ -68,8 +68,7 @@ int main(){
 	// inicia o timer
 	al_start_timer(timer);							
 
-	int choice = main_menu(queue);
-	printf("%d\n", choice);
+	main_menu(queue);
 
 /*
 	// laço principal do programa
