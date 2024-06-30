@@ -35,10 +35,16 @@ int main_menu(ALLEGRO_EVENT_QUEUE* queue){
 		else if (event.type == ALLEGRO_EVENT_KEY_DOWN){
 			if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) choice++;
 			else if (event.keyboard.keycode == ALLEGRO_KEY_UP) choice--;
-			else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) return choice;
+			else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER){
+				al_destroy_bitmap(main_menu_image);
+				return choice;
+			}
 		}
 		// evento de fechamento da janela
-		else if (event.type == 42) return 2;	
+		else if (event.type == 42){
+			al_destroy_bitmap(main_menu_image);
+			return 2;	
+		}
 	}
 }
 
@@ -71,10 +77,16 @@ int background_menu(ALLEGRO_EVENT_QUEUE* queue){
 		else if (event.type == ALLEGRO_EVENT_KEY_DOWN){
 			if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) choice++;
 			else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) choice--;
-			else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) return choice;
+			else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER){
+				al_destroy_bitmap(background_menu);
+				return choice;
+			}
 		}
 		// evento de fechamento da janela
-		else if (event.type == 42) return -1;	
+		else if (event.type == 42){
+			al_destroy_bitmap(background_menu);	
+			return -1;
+		}
 	}
 }
 
@@ -104,8 +116,12 @@ int main(){
 	// inicia o timer
 	al_start_timer(timer);							
 
-	main_menu(queue);
-	background_menu(queue);
+	char mode = main_menu(queue);
+
+	if (mode != 2){
+		char background = background_menu(queue);
+	}
+
 
 /*
 	// laço principal do programa
