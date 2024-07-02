@@ -4,11 +4,14 @@ CC = gcc
 
 all: SF
 
-SF: StreetFighter.o
-	@$(CC) StreetFighter.o -o SF $(FLAGS)
+SF: StreetFighter.o menu.o
+	@$(CC) StreetFighter.o menu.o -o SF $(FLAGS)
 
 StreetFighter.o: StreetFighter.c
 	@$(CC) -c StreetFighter.c $(FLAGS)
+
+menu.o: menu.c
+	@$(CC) -c menu.c $(FLAGS)
 
 # limpa todos os objetos
 clean:
