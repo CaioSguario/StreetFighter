@@ -8,20 +8,49 @@
 #include <stdio.h>
 #include "menu.h"
 
-void game(ALLEGRO_EVENT_QUEUE* queue){
+int fight(ALLEGRO_EVENT_QUEUE* queue, char game_mode, char background_choice, char character1, char character2){
+	ALLEGRO_EVENT event;
+
+	// seleciona o background escolhido
+	ALLEGRO_BITMAP* background;
+	if (background_choice == 0) background = al_load_bitmap("./images/backgrounds/background1.jpg");
+	else if (background_choice == 1) background = al_load_bitmap("./images/backgrounds/background2.jpg");
+	else if (background_choice == 2) background = al_load_bitmap("./images/backgrounds/background3.jpg");
+
+	// laco principal do jogo
+	while (1){
+		al_wait_for_event(queue, &event);
+
+		if (event.type == 30){
+			al_draw_bitmap(background, 0, 0, 0);
+
+			al_flip_display();
+		}
+		else if (event.type == 42){
+			al_destroy_bitmap(background);
+			return -1;
+		}
+
+	}
+}
+
+int game(ALLEGRO_EVENT_QUEUE* queue){
 	// menu principal
 	char mode = main_menu(queue);
-	if (mode == 2) return;
+	if (mode == 2) return -1;
 
 	// selecao de cenario
 	char background = background_menu(queue);
-	if (background == -1) return;
+	if (background == -1) return -1;
 
 	// selecao de personagem
 	char player1 = player_selection(queue, 1);
-	if (player1 == -1) return;
+	if (player1 == -1) return -1;
 	char player2 = player_selection(queue, 2);
-	if (player2 == -1) return;
+	if (player2 == -1) return -1;
+
+	// a luta
+	if (fight(queue, mode, background, player1, player2) == -1) return -1;
 }
 
 int main(){
