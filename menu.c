@@ -8,6 +8,45 @@
 //#include <allegro5/allegro_native_dialog.h>
 #include <stdio.h>
 
+int pause_menu(ALLEGRO_EVENT_QUEUE* queue){
+	// carrega a imagem
+	ALLEGRO_BITMAP* pause_menu_image = al_load_bitmap("./images/menus/pause_menu_image.jpg");
+
+	ALLEGRO_EVENT event;
+
+	// escolha atual
+	int choice = 0;
+
+	while (1){
+		al_wait_for_event(queue, &event);
+
+		// evento de relogio
+		// desenha a imagem e faz a selecao da opcao
+		if (event.type == 30){
+			al_draw_bitmap(pause_menu_image, 0, 0, 0);
+
+			if (choice == 0) al_draw_filled_circle(756, 639, 10, al_map_rgb(237, 28, 36));
+			else if (choice == 1) al_draw_filled_circle(771, 712, 10, al_map_rgb(237, 28, 36));
+
+			al_flip_display();
+		}
+		// tecla pressionada
+		else if (event.type == ALLEGRO_EVENT_KEY_DOWN){
+			if ((event.keyboard.keycode == ALLEGRO_KEY_DOWN) || (event.keyboard.keycode == ALLEGRO_KEY_UP)) choice ^ 1;
+			else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER){
+				al_destroy_bitmap(pause_menu_image);
+				return choice;
+			}
+		}
+		// evento de fechamento da janela
+		else if (event.type == 42){
+			al_destroy_bitmap(pause_menu_image);
+			return 1;	
+		}
+	}
+	
+}
+
 int main_menu(ALLEGRO_EVENT_QUEUE* queue){
 	// carrega a imagem
 	ALLEGRO_BITMAP* main_menu_image = al_load_bitmap("./images/menus/main_menu_image.jpg");

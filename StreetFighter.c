@@ -11,6 +11,8 @@
 int fight(ALLEGRO_EVENT_QUEUE* queue, char game_mode, char background_choice, char character1, char character2){
 	ALLEGRO_EVENT event;
 
+	int pause;
+
 	// seleciona o background escolhido
 	ALLEGRO_BITMAP* background;
 	if (background_choice == 0) background = al_load_bitmap("./images/backgrounds/background1.jpg");
@@ -25,6 +27,9 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, char game_mode, char background_choice, ch
 			al_draw_bitmap(background, 0, 0, 0);
 
 			al_flip_display();
+		}
+		else if (event.type == ALLEGRO_EVENT_KEY_DOWN){
+			if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) pause = pause_menu(queue);
 		}
 		else if (event.type == 42){
 			al_destroy_bitmap(background);
