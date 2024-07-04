@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "menu.h"
 
-int fight(ALLEGRO_EVENT_QUEUE* queue, char game_mode, char background_choice, char character1, char character2){
+int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int character1, int character2){
 	ALLEGRO_EVENT event;
 
 	int pause;
@@ -23,17 +23,22 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, char game_mode, char background_choice, ch
 	while (1){
 		al_wait_for_event(queue, &event);
 
+		// evento de relogio
 		if (event.type == 30){
 			al_draw_bitmap(background, 0, 0, 0);
 
 			al_flip_display();
 		}
+
+		// tecla pressionada
 		else if (event.type == ALLEGRO_EVENT_KEY_DOWN){
 			if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE){ 
 				pause = pause_menu(queue);
 				if (pause) return -1;
 			}
 		}
+
+		// janela fechada
 		else if (event.type == 42){
 			al_destroy_bitmap(background);
 			return -1;
@@ -44,17 +49,19 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, char game_mode, char background_choice, ch
 
 int game(ALLEGRO_EVENT_QUEUE* queue){
 	// menu principal
-	char mode = main_menu(queue);
+	int mode = main_menu(queue);
 	if (mode == 2) return -1;
 
 	// selecao de cenario
-	char background = background_menu(queue);
+	int background = background_menu(queue);
 	if (background == -1) return -1;
 
+
 	// selecao de personagem
-	char player1 = player_selection(queue, 1);
+	int player1 = player_selection(queue, 1);
 	if (player1 == -1) return -1;
-	char player2 = player_selection(queue, 2);
+
+	int player2 = player_selection(queue, 2);
 	if (player2 == -1) return -1;
 
 	// a luta
