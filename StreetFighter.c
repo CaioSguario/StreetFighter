@@ -29,7 +29,10 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, char game_mode, char background_choice, ch
 			al_flip_display();
 		}
 		else if (event.type == ALLEGRO_EVENT_KEY_DOWN){
-			if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) pause = pause_menu(queue);
+			if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE){ 
+				pause = pause_menu(queue);
+				if (pause) return -1;
+			}
 		}
 		else if (event.type == 42){
 			al_destroy_bitmap(background);

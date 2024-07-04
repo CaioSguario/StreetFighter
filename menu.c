@@ -10,7 +10,7 @@
 
 int pause_menu(ALLEGRO_EVENT_QUEUE* queue){
 	// carrega a imagem
-	ALLEGRO_BITMAP* pause_menu_image = al_load_bitmap("./images/menus/pause_menu_image.jpg");
+	ALLEGRO_BITMAP* pause_menu_image = al_load_bitmap("./images/menus/pause_menu.png");
 
 	ALLEGRO_EVENT event;
 
@@ -23,16 +23,16 @@ int pause_menu(ALLEGRO_EVENT_QUEUE* queue){
 		// evento de relogio
 		// desenha a imagem e faz a selecao da opcao
 		if (event.type == 30){
-			al_draw_bitmap(pause_menu_image, 0, 0, 0);
+			al_draw_bitmap(pause_menu_image, 650, 250, 0);
 
-			if (choice == 0) al_draw_filled_circle(756, 639, 10, al_map_rgb(237, 28, 36));
-			else if (choice == 1) al_draw_filled_circle(771, 712, 10, al_map_rgb(237, 28, 36));
+			if (choice == 0) al_draw_filled_circle(790, 430, 10, al_map_rgb(237, 28, 36));
+			else if (choice == 1) al_draw_filled_circle(790, 500, 10, al_map_rgb(237, 28, 36));
 
 			al_flip_display();
 		}
 		// tecla pressionada
 		else if (event.type == ALLEGRO_EVENT_KEY_DOWN){
-			if ((event.keyboard.keycode == ALLEGRO_KEY_DOWN) || (event.keyboard.keycode == ALLEGRO_KEY_UP)) choice ^ 1;
+			if ((event.keyboard.keycode == ALLEGRO_KEY_DOWN) || (event.keyboard.keycode == ALLEGRO_KEY_UP)) choice ^= 1;
 			else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER){
 				al_destroy_bitmap(pause_menu_image);
 				return choice;
