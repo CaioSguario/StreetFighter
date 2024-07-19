@@ -8,6 +8,33 @@
 #include <stdio.h>
 #include "menu.h"
 
+#define NUM_PERSONAGENS 2
+#define NUM_ESTADOS 6
+#define NUM_SPRITES 4
+
+void carrega_sprites(ALLEGRO_BITMAP *sprites[NUM_PERSONAGENS][NUM_ESTADOS][NUM_SPRITES]) {
+    const char *personagens[] = {"ryu", "chun-li"};
+    const char *estados[] = {"abaixado", "andando", "em_pe", "pulando", "ataque_superior", "ataque_inferior"};
+
+    for (int i = 0; i < NUM_PERSONAGENS; i++) {
+        for (int j = 0; j < NUM_ESTADOS; j++) {
+            for (int k = 0; k < NUM_SPRITES; k++) {
+                char caminho[100];
+                snprintf(caminho, sizeof(caminho), "assets/%s/%s/%d.png", personagens[i], estados[j], k + 1);
+                sprites[i][j][k] = al_load_bitmap(caminho);
+        	}
+    	}
+	}
+}
+
+void desaloca_sprites(ALLEGRO_BITMAP *sprites[NUM_PERSONAGENS][NUM_ESTADOS][NUM_SPRITES]){
+	for (int i=0; i<NUM_PERSONAGENS; i++)
+		for (int j=0; j<NUM_ESTADOS; j++)
+			for (int k=0; k<NUM_SPRITES; k++)
+				al_destroy_bitmap(sprites[i][j][k]);
+		
+}
+
 int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int character1, int character2){
 	ALLEGRO_EVENT event;
 
@@ -88,11 +115,13 @@ int main(){
 	al_register_event_source(queue, al_get_display_event_source(disp));				
 	al_register_event_source(queue, al_get_timer_event_source(timer));				
 
+	ALLEGRO_BITMAP* sprites[NUM_PERSONAGENS][NUM_ESTADOS][NUM_SPRITES];
+	carrega_sprites(sprites);
+
 	// variavel que guarda os eventos capturados
 	ALLEGRO_EVENT event;
 
-	// inicia o timer
-	al_start_timer(timer);							
+	al_start_timer(timer);
 
 	// comeca o jogo
 	game(queue);
@@ -116,6 +145,7 @@ int main(){
 	al_destroy_display(disp);
 	al_destroy_timer(timer);
 	al_destroy_event_queue(queue);
+	desaloca_sprites(sprites);
 
 	return 0;
 }
