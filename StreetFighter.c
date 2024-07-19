@@ -57,13 +57,11 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 	// laco principal do jogo
 	while (1){
 		al_wait_for_event(queue, &event);
-		ALLEGRO_BITMAP *p1 = sprites[0][0][0];
-
 
 		// evento de relogio
 		if (event.type == 30){
 			al_draw_bitmap(background, 0, 0, 0);
-			desenha_bitmap_centralizado(sprites[0][0][0], 1000, 500);
+			desenha_bitmap_centralizado(sprites[0][2][0], 1000, 500);
 
 			al_flip_display();
 		}
