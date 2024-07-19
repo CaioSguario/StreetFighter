@@ -12,7 +12,15 @@
 #define NUM_ESTADOS 6
 #define NUM_SPRITES 4
 
-void carrega_sprites(ALLEGRO_BITMAP *sprites[NUM_PERSONAGENS][NUM_ESTADOS][NUM_SPRITES]) {
+ALLEGRO_BITMAP *sprites[NUM_PERSONAGENS][NUM_ESTADOS][NUM_SPRITES];
+
+void desenha_bitmap_centralizado(ALLEGRO_BITMAP *bitmap, int x, int y){
+	x = x - al_get_bitmap_width(bitmap)/2;
+	y = y - al_get_bitmap_height(bitmap)/2;
+	al_draw_bitmap(bitmap, x, y, 0);
+}
+
+void carrega_sprites(){
     const char *personagens[] = {"ryu", "chun-li"};
     const char *estados[] = {"abaixado", "andando", "em_pe", "pulando", "ataque_superior", "ataque_inferior"};
 
@@ -20,14 +28,14 @@ void carrega_sprites(ALLEGRO_BITMAP *sprites[NUM_PERSONAGENS][NUM_ESTADOS][NUM_S
         for (int j = 0; j < NUM_ESTADOS; j++) {
             for (int k = 0; k < NUM_SPRITES; k++) {
                 char caminho[100];
-                snprintf(caminho, sizeof(caminho), "assets/%s/%s/%d.png", personagens[i], estados[j], k + 1);
+                snprintf(caminho, sizeof(caminho), "./images/sprites/%s/%s/%d.png", personagens[i], estados[j], k + 1);
                 sprites[i][j][k] = al_load_bitmap(caminho);
         	}
     	}
 	}
 }
 
-void desaloca_sprites(ALLEGRO_BITMAP *sprites[NUM_PERSONAGENS][NUM_ESTADOS][NUM_SPRITES]){
+void desaloca_sprites(){
 	for (int i=0; i<NUM_PERSONAGENS; i++)
 		for (int j=0; j<NUM_ESTADOS; j++)
 			for (int k=0; k<NUM_SPRITES; k++)
@@ -49,10 +57,13 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 	// laco principal do jogo
 	while (1){
 		al_wait_for_event(queue, &event);
+		ALLEGRO_BITMAP *p1 = sprites[0][0][0];
+
 
 		// evento de relogio
 		if (event.type == 30){
 			al_draw_bitmap(background, 0, 0, 0);
+			desenha_bitmap_centralizado(sprites[0][0][0], 1000, 500);
 
 			al_flip_display();
 		}
@@ -115,8 +126,7 @@ int main(){
 	al_register_event_source(queue, al_get_display_event_source(disp));				
 	al_register_event_source(queue, al_get_timer_event_source(timer));				
 
-	ALLEGRO_BITMAP* sprites[NUM_PERSONAGENS][NUM_ESTADOS][NUM_SPRITES];
-	carrega_sprites(sprites);
+	carrega_sprites();
 
 	// variavel que guarda os eventos capturados
 	ALLEGRO_EVENT event;
@@ -145,7 +155,7 @@ int main(){
 	al_destroy_display(disp);
 	al_destroy_timer(timer);
 	al_destroy_event_queue(queue);
-	desaloca_sprites(sprites);
+	desaloca_sprites();
 
 	return 0;
 }
