@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "menu.h"
 
-#define NUM_PERSONAGENS 2
+#define NUM_PERSONAGENS 4
 #define NUM_ESTADOS 6
 #define NUM_SPRITES 4
 
@@ -21,7 +21,7 @@ void desenha_bitmap_centralizado(ALLEGRO_BITMAP *bitmap, int x, int y){
 }
 
 void carrega_sprites(){
-    const char *personagens[] = {"ryu", "chun-li"};
+    const char *personagens[] = {"ryu", "ken", "chun-li", "bison"};
     const char *estados[] = {"abaixado", "andando", "em_pe", "pulando", "ataque_superior", "ataque_inferior"};
 
     for (int i = 0; i < NUM_PERSONAGENS; i++) {
