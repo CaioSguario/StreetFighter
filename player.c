@@ -1,9 +1,12 @@
 #include <stdlib.h>
 #include "player.h"
 
-player* player_create(int h_side, int v_side, unsigned char face, int x, int y){
+player* player_create(int h_side, int v_side, unsigned char face, int x, int y, int character){
 	player *p = (player*) malloc(sizeof(player));
 
+	p->character = character;
+	p->estado = EM_PE;
+	p->sprite = 0;
 	p->v_side = v_side;
 	p->h_side = h_side;
 	p->x = x;

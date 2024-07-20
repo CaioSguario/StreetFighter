@@ -8,17 +8,11 @@
 #include <stdio.h>
 #include "menu.h"
 #include "player.h"
+#include "keyboard.h"
 
 #define NUM_PERSONAGENS 4
 #define NUM_ESTADOS 6
 #define NUM_SPRITES 4
-
-#define ABAIXADO 0
-#define ANDANDO 1
-#define EM_PE 2
-#define PULANDO 3
-#define ATAQUE_SUPERIOR 4
-#define ATAQUE_INFERIOR 5
 
 #define DIREITA 0
 #define ESQUERDA 1
@@ -57,18 +51,15 @@ void desaloca_sprites(){
 int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int character1, int character2){
 	ALLEGRO_EVENT event;
 
-	// controle do estado dos players
-	int estado1 = EM_PE;
-	int estado2 = EM_PE;
-
-	// controle das sprites dos players
-	int sprite1 = 0;
-	int sprite2 = 0;
-
 	int pause;
+	int sprite1_frame_counter = 0;
+	int sprite2_frame_counter = 0;
 
-	player *p1 = player_create(210, 340, DIREITA, 500, 750);
-	player *p2 = player_create(210, 340, ESQUERDA, 1450, 750);
+	//ALLEGRO_TIMER *timer = al_create_timer(1.0/60.0);
+
+	// inicializa o player1 e o player2
+	player *p1 = player_create(210, 340, DIREITA, 500, 750, character1);
+	player *p2 = player_create(210, 340, ESQUERDA, 1450, 750, character2);
 
 	// seleciona o background escolhido
 	ALLEGRO_BITMAP* background;
@@ -84,15 +75,46 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 
 		// evento de relogio
 		if (event.type == 30){
+			// atualiza os sprites para gerar animação
+			sprite1_frame_counter++;
+			if (sprite1_frame_counter == 6){
+				sprite1_frame_counter = 0;
+				p1->sprite = (p1->sprite + 1) % 4;
+			}
+			sprite2_frame_counter++;
+			if (sprite2_frame_counter == 6){
+				sprite2_frame_counter = 0;
+				p2->sprite = (p2->sprite + 1) % 4;
+			}
+
+			// desenha as imagens
 			al_draw_bitmap(background, 0, 0, 0);
-			desenha_bitmap_centralizado(sprites[character1][estado1][sprite1], p1->x, p1->y, p1->face);
-			desenha_bitmap_centralizado(sprites[character2][estado2][sprite2], p2->x, p2->y, p2->face);
+			desenha_bitmap_centralizado(sprites[p1->character][p1->estado][p1->sprite], p1->x, p1->y, p1->face);
+			desenha_bitmap_centralizado(sprites[p2->character][p2->estado][p2->sprite], p2->x, p2->y, p2->face);
 
 			al_flip_display();
 		}
 
 		// tecla pressionada
 		else if (event.type == ALLEGRO_EVENT_KEY_DOWN){
+			// controla o player 1
+			if (event.keyboard.keycode == ALLEGRO_KEY_W) pulo(p1, &sprite1_frame_counter);			
+			if (event.keyboard.keycode == ALLEGRO_KEY_D) direita(p1, &sprite1_frame_counter);
+			if (event.keyboard.keycode == ALLEGRO_KEY_A) esquerda(p1, &sprite1_frame_counter);
+			if (event.keyboard.keycode == ALLEGRO_KEY_S) abaixa(p1, &sprite1_frame_counter);
+			if (event.keyboard.keycode == ALLEGRO_KEY_X) soco(p1, &sprite1_frame_counter);
+			if (event.keyboard.keycode == ALLEGRO_KEY_C) chute(p1, &sprite1_frame_counter);
+
+			// caso multiplayer
+			if (game_mode){
+				if (event.keyboard.keycode == ALLEGRO_KEY_UP) pulo(p2, &sprite2_frame_counter);			
+				if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) direita(p2, &sprite2_frame_counter);
+				if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) esquerda(p2, &sprite2_frame_counter);
+				if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) abaixa(p2, &sprite2_frame_counter);
+				if (event.keyboard.keycode == ALLEGRO_KEY_K) soco(p2, &sprite2_frame_counter);
+				if (event.keyboard.keycode == ALLEGRO_KEY_L) chute(p2, &sprite2_frame_counter);
+			}
+
 			if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE){ 
 				pause = pause_menu(queue);
 				if (pause){
@@ -147,7 +169,7 @@ int main(){
 	al_install_keyboard();
 
 	// cria as estruturas do jogo
-	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);
+	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 24.0);
 	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
 	ALLEGRO_FONT* font = al_create_builtin_font();
 	ALLEGRO_DISPLAY* disp = al_create_display(1920, 1080);

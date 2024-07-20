@@ -4,8 +4,8 @@ CC = gcc
 
 all: SF
 
-SF: StreetFighter.o menu.o player.o
-	@$(CC) StreetFighter.o menu.o player.o -o SF $(FLAGS)
+SF: StreetFighter.o menu.o player.o keyboard.o
+	@$(CC) StreetFighter.o menu.o player.o keyboard.o -o SF $(FLAGS)
 
 StreetFighter.o: StreetFighter.c
 	@$(CC) -c StreetFighter.c $(FLAGS)
@@ -15,6 +15,9 @@ menu.o: menu.c
 
 player.o: player.c
 	@$(CC) -c player.c $(FLAGS)
+
+keyboard.o: keyboard.c
+	@$(CC) -c keyboard.c $(FLAGS)
 
 # limpa todos os objetos
 clean:
