@@ -7,17 +7,28 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "menu.h"
+#include "player.h"
 
 #define NUM_PERSONAGENS 4
 #define NUM_ESTADOS 6
 #define NUM_SPRITES 4
 
+#define ABAIXADO 0
+#define ANDANDO 1
+#define EM_PE 2
+#define PULANDO 3
+#define ATAQUE_SUPERIOR 4
+#define ATAQUE_INFERIOR 5
+
+#define DIREITA 0
+#define ESQUERDA 1
+
 ALLEGRO_BITMAP *sprites[NUM_PERSONAGENS][NUM_ESTADOS][NUM_SPRITES];
 
-void desenha_bitmap_centralizado(ALLEGRO_BITMAP *bitmap, int x, int y){
+void desenha_bitmap_centralizado(ALLEGRO_BITMAP *bitmap, int x, int y, unsigned char face){
 	x = x - al_get_bitmap_width(bitmap)/2;
 	y = y - al_get_bitmap_height(bitmap)/2;
-	al_draw_bitmap(bitmap, x, y, 0);
+	al_draw_bitmap(bitmap, x, y, face);
 }
 
 void carrega_sprites(){
@@ -46,13 +57,26 @@ void desaloca_sprites(){
 int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int character1, int character2){
 	ALLEGRO_EVENT event;
 
+	// controle do estado dos players
+	int estado1 = EM_PE;
+	int estado2 = EM_PE;
+
+	// controle das sprites dos players
+	int sprite1 = 0;
+	int sprite2 = 0;
+
 	int pause;
+
+	player *p1 = player_create(210, 340, DIREITA, 500, 750);
+	player *p2 = player_create(210, 340, ESQUERDA, 1450, 750);
 
 	// seleciona o background escolhido
 	ALLEGRO_BITMAP* background;
 	if (background_choice == 0) background = al_load_bitmap("./images/backgrounds/background1.jpg");
 	else if (background_choice == 1) background = al_load_bitmap("./images/backgrounds/background2.jpg");
 	else if (background_choice == 2) background = al_load_bitmap("./images/backgrounds/background3.jpg");
+
+
 
 	// laco principal do jogo
 	while (1){
@@ -61,7 +85,8 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 		// evento de relogio
 		if (event.type == 30){
 			al_draw_bitmap(background, 0, 0, 0);
-			desenha_bitmap_centralizado(sprites[0][2][0], 1000, 500);
+			desenha_bitmap_centralizado(sprites[character1][estado1][sprite1], p1->x, p1->y, p1->face);
+			desenha_bitmap_centralizado(sprites[character2][estado2][sprite2], p2->x, p2->y, p2->face);
 
 			al_flip_display();
 		}
@@ -70,17 +95,25 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 		else if (event.type == ALLEGRO_EVENT_KEY_DOWN){
 			if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE){ 
 				pause = pause_menu(queue);
-				if (pause) return -1;
+				if (pause){
+					al_destroy_bitmap(background);
+					free(p1);
+					free(p2);
+					return -1;
+				}
 			}
 		}
 
 		// janela fechada
 		else if (event.type == 42){
 			al_destroy_bitmap(background);
+			free(p1);
+			free(p2);
 			return -1;
 		}
 
 	}
+
 }
 
 int game(ALLEGRO_EVENT_QUEUE* queue){
