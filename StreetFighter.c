@@ -51,11 +51,14 @@ void desaloca_sprites(){
 int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int character1, int character2){
 	ALLEGRO_EVENT event;
 
+	bool keys[ALLEGRO_KEY_MAX];
+	for (int i=0; i<ALLEGRO_KEY_MAX; i++) keys[i] = 0;
+
 	int pause;
 	int sprite1_frame_counter = 0;
 	int sprite2_frame_counter = 0;
-
-	//ALLEGRO_TIMER *timer = al_create_timer(1.0/60.0);
+	int action1_counter = 0;
+	int action2_counter = 0;
 
 	// inicializa o player1 e o player2
 	player *p1 = player_create(210, 340, DIREITA, 500, 750, character1);
@@ -66,7 +69,6 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 	if (background_choice == 0) background = al_load_bitmap("./images/backgrounds/background1.jpg");
 	else if (background_choice == 1) background = al_load_bitmap("./images/backgrounds/background2.jpg");
 	else if (background_choice == 2) background = al_load_bitmap("./images/backgrounds/background3.jpg");
-
 
 
 	// laco principal do jogo
@@ -86,6 +88,21 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 				sprite2_frame_counter = 0;
 				p2->sprite = (p2->sprite + 1) % 4;
 			}
+			// atualiza os estados dos personagens
+			if (!(p1->pulando) && !(p1->atacando) && !(p1->abaixando) && !(p1->direita) && !(p1->esquerda)) p1->estado = EM_PE;
+			action1_counter++;
+			if (action1_counter == 24){
+				action1_counter = 0;
+				p1->pulando = 0;
+				p1->atacando = 0;
+			}
+			if (!(p2->pulando) && !(p2->atacando) && !(p2->abaixando) && !(p2->direita) && (p2->esquerda)) p2->estado = EM_PE;
+			action2_counter++;
+			if (action2_counter == 24){
+				action2_counter = 0;
+				p2->pulando = 0;
+				p2->atacando = 0;
+			}
 
 			// desenha as imagens
 			al_draw_bitmap(background, 0, 0, 0);
@@ -97,24 +114,26 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 
 		// tecla pressionada
 		else if (event.type == ALLEGRO_EVENT_KEY_DOWN){
-			// controla o player 1
-			if (event.keyboard.keycode == ALLEGRO_KEY_W) pulo(p1, &sprite1_frame_counter);			
-			if (event.keyboard.keycode == ALLEGRO_KEY_D) direita(p1, &sprite1_frame_counter);
-			if (event.keyboard.keycode == ALLEGRO_KEY_A) esquerda(p1, &sprite1_frame_counter);
-			if (event.keyboard.keycode == ALLEGRO_KEY_S) abaixa(p1, &sprite1_frame_counter);
-			if (event.keyboard.keycode == ALLEGRO_KEY_X) soco(p1, &sprite1_frame_counter);
-			if (event.keyboard.keycode == ALLEGRO_KEY_C) chute(p1, &sprite1_frame_counter);
+			// tecla pressionada
+			if (event.type == ALLEGRO_EVENT_KEY_DOWN){
+				// controla o player 1
+				if (event.keyboard.keycode == ALLEGRO_KEY_W) pulo(p1, &sprite1_frame_counter, &action1_counter);
+				else if (event.keyboard.keycode == ALLEGRO_KEY_D) direita(p1, &sprite1_frame_counter, &action1_counter);
+				else if (event.keyboard.keycode == ALLEGRO_KEY_A) esquerda(p1, &sprite1_frame_counter, &action1_counter);
+				else if (event.keyboard.keycode == ALLEGRO_KEY_S) abaixa(p1, &sprite1_frame_counter, &action1_counter);
+				else if (event.keyboard.keycode == ALLEGRO_KEY_X) soco(p1, &sprite1_frame_counter, &action1_counter);
+				else if (event.keyboard.keycode == ALLEGRO_KEY_C) chute(p1, &sprite1_frame_counter, &action1_counter);
 
-			// caso multiplayer
-			if (game_mode){
-				if (event.keyboard.keycode == ALLEGRO_KEY_UP) pulo(p2, &sprite2_frame_counter);			
-				if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) direita(p2, &sprite2_frame_counter);
-				if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) esquerda(p2, &sprite2_frame_counter);
-				if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) abaixa(p2, &sprite2_frame_counter);
-				if (event.keyboard.keycode == ALLEGRO_KEY_K) soco(p2, &sprite2_frame_counter);
-				if (event.keyboard.keycode == ALLEGRO_KEY_L) chute(p2, &sprite2_frame_counter);
+				// caso multiplayer
+				if (game_mode){
+					if (event.keyboard.keycode == ALLEGRO_KEY_UP) pulo(p2, &sprite2_frame_counter, &action2_counter);
+					else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) direita(p2, &sprite2_frame_counter, &action2_counter);
+					else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) esquerda(p2, &sprite2_frame_counter, &action2_counter);
+					else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) abaixa(p2, &sprite2_frame_counter, &action2_counter);
+					else if (event.keyboard.keycode == ALLEGRO_KEY_K) soco(p2, &sprite2_frame_counter, &action2_counter);
+					else if (event.keyboard.keycode == ALLEGRO_KEY_L) chute(p2, &sprite2_frame_counter, &action2_counter);
+				}
 			}
-
 			if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE){ 
 				pause = pause_menu(queue);
 				if (pause){
@@ -123,6 +142,21 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 					free(p2);
 					return -1;
 				}
+			}
+		}
+	
+		//tecla solta
+		else if (event.type == ALLEGRO_EVENT_KEY_UP){
+			// controla o player 1
+			if (event.keyboard.keycode == ALLEGRO_KEY_D) direita(p1, &sprite1_frame_counter, &action1_counter);
+			else if (event.keyboard.keycode == ALLEGRO_KEY_A) esquerda(p1, &sprite1_frame_counter, &action1_counter);
+			else if (event.keyboard.keycode == ALLEGRO_KEY_S) abaixa(p1, &sprite1_frame_counter, &action1_counter);
+
+			// caso multiplayer
+			if (game_mode){
+				if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) direita(p2, &sprite2_frame_counter, &action2_counter);
+				else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) esquerda(p2, &sprite2_frame_counter, &action2_counter);
+				else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) abaixa(p2, &sprite2_frame_counter, &action2_counter);
 			}
 		}
 
@@ -188,20 +222,6 @@ int main(){
 
 	// comeca o jogo
 	game(queue);
-
-/*
-	// laço principal do programa
-	while(1){
-		al_wait_for_event(queue, &event);
-
-		// evento de relogio
-		if (event.type == 30){
-			
-		}
-		// evento de fechamento da janela
-		else if (event.type == 42) break;
-	}
-*/
 
 	// liberacao de memoria
 	al_destroy_font(font);

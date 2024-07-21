@@ -16,6 +16,7 @@ player* player_create(int h_side, int v_side, unsigned char face, int x, int y, 
 	p->atacando = 0;
 	p->abaixando = 0;
 	p->pulando = 0;
-
+	p->esquerda = 0;
+	p->direita = 0;
 	return p;
 }

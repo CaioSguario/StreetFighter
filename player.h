@@ -21,6 +21,8 @@ typedef struct player{
 	unsigned char atacando;
 	unsigned char pulando;
 	unsigned char abaixando;
+	unsigned char direita;
+	unsigned char esquerda;
 } player;
 
 player* player_create(int h_side, int v_side, unsigned char face, int x, int y, int character);
