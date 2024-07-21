@@ -18,11 +18,15 @@ typedef struct player{
 	int v_side;
 	unsigned char face;
 	unsigned char hp;
-	unsigned char atacando;
+	unsigned char soco;
+	unsigned char chute;
 	unsigned char pulando;
 	unsigned char abaixando;
 	unsigned char direita;
 	unsigned char esquerda;
+	unsigned char pulo_frame_counter;
+	unsigned char soco_frame_counter;
+	unsigned char chute_frame_counter;
 } player;
 
 player* player_create(int h_side, int v_side, unsigned char face, int x, int y, int character);

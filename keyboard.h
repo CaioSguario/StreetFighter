@@ -2,17 +2,16 @@
 #define __KEYBOARD__
 
 #include "player.h"
+#include <stdlib.h>
+#include <allegro5/allegro5.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_primitives.h>
 
-void pulo(player *p, int *sprite_frame_counter, int *action_counter);
+void ajeita_estados(player *p1, player *p2, char keydown, int game_mode, ALLEGRO_EVENT event);
 
-void direita(player *p, int *sprite_frame_counter, int *action_counter);
+void atualiza_estados(player *p);
 
-void esquerda(player *p, int *sprite_frame_counter, int *action_counter);
-
-void abaixa(player *p, int *sprite_frame_counter, int *action_counter);
-
-void soco(player *p, int *sprite_frame_counter, int *action_counter);
-
-void chute(player *p, int *sprite_frame_counter, int *action_counter);
+void escolhe_acao(player *p);
 
 #endif
