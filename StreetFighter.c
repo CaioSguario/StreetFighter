@@ -124,6 +124,10 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 			al_draw_filled_rectangle(200, 50, 200 + 500 * p1->hp / 100, 100, al_map_rgb(255, 0, 0));
         	al_draw_filled_rectangle(1220, 50, 1220 + 500 * p2->hp / 100, 100, al_map_rgb(255, 0, 0));
 
+			// desenha a sombra dos personagens
+			al_draw_filled_ellipse(p1->x - 80, 875, 150, 35, al_map_rgba(0, 0, 0, 128));
+			al_draw_filled_ellipse(p2->x - 80, 875, 150, 35, al_map_rgba(0, 0, 0, 128));
+
 			// desenha os personagens
 			desenha_bitmap_centralizado(sprites[p1->character][p1->estado][p1->sprite], p1->x, p1->y, p1->face);
 			desenha_bitmap_centralizado(sprites[p2->character][p2->estado][p2->sprite], p2->x, p2->y, p2->face);

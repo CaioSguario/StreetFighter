@@ -76,8 +76,8 @@ void atualiza_estados(player *p){
 
 void pula(player *p){
 	p->estado = PULANDO;
-	if (p->esquerda && !(p->direita)) p->x -= 20;
-	if (p->direita && !(p->esquerda)) p->x += 20;
+	if (p->esquerda && !(p->direita) && p->x > 220) p->x -= 20;
+	if (p->direita && !(p->esquerda) && p->x < 1700) p->x += 20;
 
 	if (p->pulo_frame_counter < 4) p->y += 40;
 	else if (p->pulo_frame_counter < 8) p->y += 20;
@@ -100,12 +100,12 @@ void chute(player *p){
 
 void esquerda(player *p){
 	p->estado = ANDANDO;
-	p->x -= 20;
+	if (p->x > 220) p->x -= 20;
 }
 
 void direita(player *p){
 	p->estado = ANDANDO;
-	p->x += 20;
+	if (p->x < 1700) p->x += 20;
 }
 
 void para(player *p){
