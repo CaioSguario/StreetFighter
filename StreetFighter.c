@@ -2,8 +2,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
-//#include <allegro5/allegro_ttf.h>
-//#include <allegro5/allegro_native_dialog.h>
+#include <allegro5/allegro_ttf.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "menu.h"
@@ -114,8 +113,18 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 			ultimo_estado1 = p1->estado;
 			ultimo_estado2 = p2->estado;
 
-			// desenha as imagens
+			// desenha o background
 			al_draw_bitmap(background, 0, 0, 0);
+
+			//desenha a barra preta de vida
+			al_draw_filled_rectangle(200, 50, 700, 100, al_map_rgb(20, 20, 20));
+        	al_draw_filled_rectangle(1220, 50, 1720, 100, al_map_rgb(20, 20, 20));
+
+			// desenha a barra vermelha de vida
+			al_draw_filled_rectangle(200, 50, 200 + 500 * p1->hp / 100, 100, al_map_rgb(255, 0, 0));
+        	al_draw_filled_rectangle(1220, 50, 1220 + 500 * p2->hp / 100, 100, al_map_rgb(255, 0, 0));
+
+			// desenha os personagens
 			desenha_bitmap_centralizado(sprites[p1->character][p1->estado][p1->sprite], p1->x, p1->y, p1->face);
 			desenha_bitmap_centralizado(sprites[p2->character][p2->estado][p2->sprite], p2->x, p2->y, p2->face);
 
