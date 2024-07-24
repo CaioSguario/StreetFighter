@@ -121,8 +121,8 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
         	al_draw_filled_rectangle(1220, 50, 1720, 100, al_map_rgb(20, 20, 20));
 
 			// desenha a barra vermelha de vida
-			al_draw_filled_rectangle(200, 50, 200 + 500 * p1->hp / 100, 100, al_map_rgb(255, 0, 0));
-        	al_draw_filled_rectangle(1220, 50, 1220 + 500 * p2->hp / 100, 100, al_map_rgb(255, 0, 0));
+			if (p1->hp > 0) al_draw_filled_rectangle(200, 50, 200 + 500 * p1->hp / 100, 100, al_map_rgb(255, 0, 0));
+        	if (p2->hp > 0) al_draw_filled_rectangle(1220, 50, 1220 + 500 * p2->hp / 100, 100, al_map_rgb(255, 0, 0));
 
 			// desenha a sombra dos personagens
 			al_draw_filled_ellipse(p1->x - 80, 875, 150, 35, al_map_rgba(0, 0, 0, 128));
