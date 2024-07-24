@@ -90,12 +90,26 @@ void abaixa(player *p){
 	p->estado = ABAIXADO;
 }
 
-void soco(player *p){
-	p->estado = ATAQUE_SUPERIOR;
+void soco(player *p1, player *p2){
+	p1->estado = ATAQUE_SUPERIOR;
+
+	int dx = abs(p1->x - p2->x);
+	int dy = p1->y - p2->y;
+
+	if (p2->abaixando) return;
+
+	if (p1->soco_frame_counter > 6 && p1->soco_frame_counter < 18 && dx < 200 && dy < 220) p2->hp--;
 }
 
-void chute(player *p){
-	p->estado = ATAQUE_INFERIOR;
+void chute(player *p1, player *p2){
+	p1->estado = ATAQUE_INFERIOR;
+	
+	int dx = abs(p1->x - p2->x);
+	int dy = p1->y - p2->y;
+
+	if (p2->abaixando) return;
+
+	if (p1->chute_frame_counter > 6 && p1->chute_frame_counter < 18 && dx < 200 && dy < 220) p2->hp--;
 }
 
 void esquerda(player *p){
@@ -112,17 +126,17 @@ void para(player *p){
 	p->estado = EM_PE;
 }
 
-void escolhe_acao(player *p){
-	if (p->pulando) pula(p);
-	else if (p->abaixando) abaixa(p);
-	else if (p->soco || p->chute){
-		if (!(p->soco)) chute(p);
-		if (!(p->chute)) soco(p);
+void escolhe_acao(player *p1, player *p2){
+	if (p1->pulando) pula(p1);
+	else if (p1->abaixando) abaixa(p1);
+	else if (p1->soco || p1->chute){
+		if (!(p1->soco)) chute(p1, p2);
+		if (!(p1->chute)) soco(p1, p2);
 	}
-	else if (p->direita && p->esquerda) para(p);
-	else if (p->direita) direita(p);
-	else if (p->esquerda) esquerda(p);
-	else para(p);
+	else if (p1->direita && p1->esquerda) para(p1);
+	else if (p1->direita) direita(p1);
+	else if (p1->esquerda) esquerda(p1);
+	else para(p1);
 }
 
 

@@ -79,8 +79,8 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 			atualiza_estados(p1);
 			atualiza_estados(p2);
 
-			escolhe_acao(p1);
-			escolhe_acao(p2);
+			escolhe_acao(p1, p2);
+			escolhe_acao(p2, p1);
 			if (p1->x <= p2->x){
 				p1->face = DIREITA;
 				p2->face = ESQUERDA;
