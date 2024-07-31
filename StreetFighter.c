@@ -189,7 +189,7 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 }
 
 void game(ALLEGRO_EVENT_QUEUE* queue){
-	int status;
+	int status, winner;
 
 	// placar
 	int wins1 = 0;
@@ -219,7 +219,9 @@ void game(ALLEGRO_EVENT_QUEUE* queue){
 		if (status == 2) wins2++;
 	}
 
-
+	if (wins1 == 2) winner = 1;
+	else winner = 2;
+	end_menu(queue, winner);
 }
 
 int main(){

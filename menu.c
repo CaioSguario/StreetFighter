@@ -182,6 +182,40 @@ int player_selection(ALLEGRO_EVENT_QUEUE* queue, int player){
 }
 
 
+void end_menu(ALLEGRO_EVENT_QUEUE* queue, int player){
+	// carrega a imagem
+	ALLEGRO_BITMAP* end_menu_image;
+	if (player) end_menu_image = al_load_bitmap("./images/menus/end_menu1.png");
+	else end_menu_image = al_load_bitmap("./images/menus/end_menu2.png");
+
+	ALLEGRO_EVENT event;
+
+	while (1){
+		al_wait_for_event(queue, &event);
+
+		// evento de relogio
+		// desenha a imagem e faz a selecao da opcao
+		if (event.type == 30){
+			al_draw_bitmap(end_menu_image, 650, 250, 0);
+
+			al_flip_display();
+		}
+		// tecla pressionada
+		else if (event.type == ALLEGRO_EVENT_KEY_DOWN){
+			if (event.keyboard.keycode == ALLEGRO_KEY_SPACE){
+				al_destroy_bitmap(end_menu_image);
+				return;
+			}
+		}
+		// evento de fechamento da janela
+		else if (event.type == 42){
+			al_destroy_bitmap(end_menu_image);
+			return;	
+		}
+	}
+	
+}
+
 
 
 
