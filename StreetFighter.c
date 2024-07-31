@@ -51,8 +51,7 @@ void desaloca_sprites(){
 int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int character1, int character2, int wins1, int wins2){
 	ALLEGRO_EVENT event;
 
-	bool keys[ALLEGRO_KEY_MAX];
-	for (int i=0; i<ALLEGRO_KEY_MAX; i++) keys[i] = 0;
+	al_flush_event_queue(queue);
 
 	int pause;
 	int sprite1_frame_counter = 0;
@@ -80,17 +79,19 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 
 		// evento de relogio
 		if (event.type == 30){
+			if (!game_mode) ajeita_singleplayer(p1, p2, event);
+
 			atualiza_estados(p1);
 			atualiza_estados(p2);
 
-			if (escolhe_acao(p1, p2)){
+			if (escolhe_acao(p1, p2, 1)){
 				al_destroy_bitmap(background);
 				free(p1);
 				free(p2);
 				al_destroy_font(font);
 				return 1;
 			}
-			if (escolhe_acao(p2, p1)){
+			if (escolhe_acao(p2, p1, game_mode)){
 				al_destroy_bitmap(background);
 				free(p1);
 				free(p2);
@@ -180,7 +181,7 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 			al_destroy_bitmap(background);
 			free(p1);
 			free(p2);
-			free(font);
+			al_destroy_font(font);
 			return -1;
 		}
 

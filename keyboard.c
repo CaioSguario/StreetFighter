@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "keyboard.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 void ajeita_estados(player *p1, player *p2, char keydown, int game_mode, ALLEGRO_EVENT event){
     if (event.keyboard.keycode == ALLEGRO_KEY_D) p1->direita ^= 1;
@@ -25,6 +26,7 @@ void ajeita_estados(player *p1, player *p2, char keydown, int game_mode, ALLEGRO
         }
     }
 
+	// multiplayer
     if (game_mode){
         if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) p2->direita ^= 1;
         else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) p2->esquerda ^= 1;
@@ -47,7 +49,34 @@ void ajeita_estados(player *p1, player *p2, char keydown, int game_mode, ALLEGRO
 				p2->chute_frame_counter = 24;
             }
         }
-    }
+    } 
+}
+
+void ajeita_singleplayer(player *p1, player *p2, ALLEGRO_EVENT event){
+	int random = (rand() % 120) + 1;
+	int ataque = rand() % 2;
+	int atacando = rand() % 12;
+
+	if (p1->x - p2->x > 350) p2->direita = 1;
+	else if (p1->x - p2->x >= 0) p2->direita = 0;
+
+	if (p1->x - p2->x < -350) p2->esquerda = 1;
+	else if (p1->x - p2->x <= 0) p2->esquerda = 0;
+
+	if (random == 1 && !(p2->pulo_frame_counter) && !(p2->soco_frame_counter) && !(p2->chute_frame_counter)){
+		p2->pulando = 1;
+		p2->pulo_frame_counter = 24;
+	}
+
+	if (abs(p1->x - p2->x) < 250 && atacando == 1 && !(p2->pulo_frame_counter) && !(p2->soco_frame_counter) && !(p2->chute_frame_counter)){
+		if (ataque){
+			p2->soco = 1;
+			p2->soco_frame_counter = 24;
+		} else{
+			p2->chute = 1;
+			p2->chute_frame_counter = 24;
+		}
+	}
 }
 
 void atualiza_estados(player *p){
@@ -91,7 +120,7 @@ void abaixa(player *p){
 }
 
 // retorna 1 caso derrote o p2
-int soco(player *p1, player *p2){
+int soco(player *p1, player *p2, int game_mode){
 	p1->estado = ATAQUE_SUPERIOR;
 
 	int dx = abs(p1->x - p2->x);
@@ -99,13 +128,16 @@ int soco(player *p1, player *p2){
 
 	if (p2->abaixando) return 0;
 
-	if (p1->soco_frame_counter > 6 && p1->soco_frame_counter < 18 && dx < 200 && dy < 220) p2->hp--;
+	if (p1->soco_frame_counter > 6 && p1->soco_frame_counter < 18 && dx < 200 && dy < 220){
+		if (game_mode) p2->hp--;
+		else p2->hp -= 2;
+	}
 	if (p2->hp == 0) return 1;
 	return 0;
 }
 
 // retorna 1 caso derrote o p2
-int chute(player *p1, player *p2){
+int chute(player *p1, player *p2, int game_mode){
 	p1->estado = ATAQUE_INFERIOR;
 	
 	int dx = abs(p1->x - p2->x);
@@ -113,19 +145,28 @@ int chute(player *p1, player *p2){
 
 	if (p2->abaixando) return 0;
 
-	if (p1->chute_frame_counter > 6 && p1->chute_frame_counter < 18 && dx < 200 && dy < 220) p2->hp--;
+	if (p1->chute_frame_counter > 6 && p1->chute_frame_counter < 18 && dx < 200 && dy < 220){
+		if (game_mode) p2->hp--;
+		else p2->hp -= 2;
+	}
 	if (p2->hp == 0) return 1;
 	return 0;
 }
 
-void esquerda(player *p){
+void esquerda(player *p, int game_mode){
 	p->estado = ANDANDO;
-	if (p->x > 220) p->x -= 20;
+	if (p->x > 220){
+		if (game_mode) p->x -= 20;
+		else p->x -= 15;
+	}
 }
 
-void direita(player *p){
+void direita(player *p, int game_mode){
 	p->estado = ANDANDO;
-	if (p->x < 1700) p->x += 20;
+	if (p->x < 1700){
+		if (game_mode) p->x += 20;
+		else p->x += 15;
+	}
 }
 
 void para(player *p){
@@ -133,17 +174,17 @@ void para(player *p){
 }
 
 // retorna 1 caso o player 2 seja derrotado
-int escolhe_acao(player *p1, player *p2){
+int escolhe_acao(player *p1, player *p2, int game_mode){
 	int status = 0;
 	if (p1->pulando) pula(p1);
 	else if (p1->abaixando) abaixa(p1);
 	else if (p1->soco || p1->chute){
-		if (!(p1->soco)) status = chute(p1, p2);
-		if (!(p1->chute)) status = soco(p1, p2);
+		if (!(p1->soco)) status = chute(p1, p2, game_mode);
+		if (!(p1->chute)) status = soco(p1, p2, game_mode);
 	}
 	else if (p1->direita && p1->esquerda) para(p1);
-	else if (p1->direita) direita(p1);
-	else if (p1->esquerda) esquerda(p1);
+	else if (p1->direita) direita(p1, game_mode);
+	else if (p1->esquerda) esquerda(p1, game_mode);
 	else para(p1);
 
 	return status;
