@@ -4,9 +4,18 @@
 #include <stdlib.h>
 
 void ajeita_estados(player *p1, player *p2, char keydown, int game_mode, ALLEGRO_EVENT event){
-    if (event.keyboard.keycode == ALLEGRO_KEY_D) p1->direita ^= 1;
-    else if (event.keyboard.keycode == ALLEGRO_KEY_A) p1->esquerda ^= 1;
-    else if (event.keyboard.keycode == ALLEGRO_KEY_S) p1->abaixando ^= 1;
+    if (event.keyboard.keycode == ALLEGRO_KEY_D){
+		if (keydown) p1->direita = 1;
+		else p1->direita = 0;
+	}
+    else if (event.keyboard.keycode == ALLEGRO_KEY_A){
+		if (keydown) p1->esquerda = 1;
+		else p1->esquerda = 0;
+	}
+    else if (event.keyboard.keycode == ALLEGRO_KEY_S){
+		if (keydown) p1->abaixando = 1;
+		else p1->abaixando = 0;
+	}
     else if (event.keyboard.keycode == ALLEGRO_KEY_W){
         if (keydown && !(p1->pulo_frame_counter) && !(p1->soco_frame_counter) && !(p1->chute_frame_counter)){
 			p1->pulando = 1;
@@ -28,9 +37,18 @@ void ajeita_estados(player *p1, player *p2, char keydown, int game_mode, ALLEGRO
 
 	// multiplayer
     if (game_mode){
-        if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) p2->direita ^= 1;
-        else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) p2->esquerda ^= 1;
-        else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) p2->abaixando ^= 1;
+        if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT){
+			if (keydown) p2->direita = 1;
+			else p2->direita = 0;
+		}
+        else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT){
+			if (keydown) p2->esquerda = 1;
+			else p2->esquerda = 0;
+		}
+        else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN){
+			if (keydown) p2->abaixando = 1;
+			else p2->abaixando = 0;
+		}
         else if (event.keyboard.keycode == ALLEGRO_KEY_UP){
             if (keydown && !(p2->pulo_frame_counter) && !(p2->soco_frame_counter) && !(p2->chute_frame_counter)){
 				p2->pulando = 1;
