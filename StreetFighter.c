@@ -64,7 +64,7 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 	player *p1 = player_create(210, 340, DIREITA, 500, 750, character1);
 	player *p2 = player_create(210, 340, ESQUERDA, 1450, 750, character2);
 
-	ALLEGRO_FONT *font = al_load_ttf_font("arcade_font.ttf", 32, 0);
+	ALLEGRO_FONT *font = al_load_ttf_font("./images/arcade_font.ttf", 32, 0);
 	if (!font) return -1;
 
 	// seleciona o background escolhido
@@ -83,8 +83,21 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 			atualiza_estados(p1);
 			atualiza_estados(p2);
 
-			if (escolhe_acao(p1, p2)) return 1;
-			if (escolhe_acao(p2, p1)) return 2;
+			if (escolhe_acao(p1, p2)){
+				al_destroy_bitmap(background);
+				free(p1);
+				free(p2);
+				al_destroy_font(font);
+				return 1;
+			}
+			if (escolhe_acao(p2, p1)){
+				al_destroy_bitmap(background);
+				free(p1);
+				free(p2);
+				al_destroy_font(font);
+				return 2;
+			}
+
 			if (p1->x <= p2->x){
 				p1->face = DIREITA;
 				p2->face = ESQUERDA;
@@ -129,8 +142,8 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
         	if (p2->hp > 0) al_draw_filled_rectangle(1220, 50, 1220 + 500 * p2->hp / 100, 100, al_map_rgb(255, 0, 0));
 
 			// desenha o placar
-			al_draw_textf(font, al_map_rgb(255, 0, 0), 800, 75, 0, "%d", wins1);
-			al_draw_textf(font, al_map_rgb(255, 0, 0), 1120, 75, 0, "%d", wins2);
+			al_draw_textf(font, al_map_rgb(0, 0, 0), 800, 75, 0, "%d", wins1);
+			al_draw_textf(font, al_map_rgb(0, 0, 0), 1120, 75, 0, "%d", wins2);
 
 			// desenha a sombra dos personagens
 			al_draw_filled_ellipse(p1->x - 80, 875, 150, 35, al_map_rgba(0, 0, 0, 128));
@@ -153,6 +166,7 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 					al_destroy_bitmap(background);
 					free(p1);
 					free(p2);
+					al_destroy_font(font);
 					return -1;
 				}
 			}
@@ -166,6 +180,7 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 			al_destroy_bitmap(background);
 			free(p1);
 			free(p2);
+			free(font);
 			return -1;
 		}
 
@@ -173,7 +188,7 @@ int fight(ALLEGRO_EVENT_QUEUE* queue, int game_mode, int background_choice, int 
 
 }
 
-int game(ALLEGRO_EVENT_QUEUE* queue){
+void game(ALLEGRO_EVENT_QUEUE* queue){
 	int status;
 
 	// placar
@@ -182,27 +197,29 @@ int game(ALLEGRO_EVENT_QUEUE* queue){
 
 	// menu principal
 	int mode = main_menu(queue);
-	if (mode == 2) return -1;
+	if (mode == 2) return;
 
 	// selecao de cenario
 	int background = background_menu(queue);
-	if (background == -1) return -1;
+	if (background == -1) return;
 
 
 	// selecao de personagem
 	int player1 = player_selection(queue, 1);
-	if (player1 == -1) return -1;
+	if (player1 == -1) return;
 
 	int player2 = player_selection(queue, 2);
-	if (player2 == -1) return -1;
+	if (player2 == -1) return;
 
 	// a luta
 	while (wins1 < 2 && wins2 < 2){
 		status = fight(queue, mode, background, player1, player2, wins1, wins2);
-		if (status == -1) return -1;
+		if (status == -1) return;
 		if (status == 1) wins1++;
 		if (status == 2) wins2++;
 	}
+
+
 }
 
 int main(){
