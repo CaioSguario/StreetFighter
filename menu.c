@@ -185,7 +185,7 @@ int player_selection(ALLEGRO_EVENT_QUEUE* queue, int player){
 void end_menu(ALLEGRO_EVENT_QUEUE* queue, int player){
 	// carrega a imagem
 	ALLEGRO_BITMAP* end_menu_image;
-	if (player) end_menu_image = al_load_bitmap("./images/menus/end_menu1.png");
+	if (player == 1) end_menu_image = al_load_bitmap("./images/menus/end_menu1.png");
 	else end_menu_image = al_load_bitmap("./images/menus/end_menu2.png");
 
 	ALLEGRO_EVENT event;
